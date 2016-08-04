@@ -221,11 +221,15 @@ typedef enum _sai_acl_table_attr_t
     
     /** READ-ONLY */
 
+    /** Switch Object ID [sai_object_id_t] (CREATE_ONLY),
+     * Default SAI_NULL_OBJECT_ID */
+    SAI_ACL_TABLE_ATTR_SWITCH_ID = SAI_ACL_TABLE_ATTR_START,
+
     /** READ-WRITE */
 
     /** ACL stage [sai_acl_stage_t]
      * (MANDATORY_ON_CREATE|CREATE_ONLY) */
-    SAI_ACL_TABLE_ATTR_STAGE = SAI_ACL_TABLE_ATTR_START,
+    SAI_ACL_TABLE_ATTR_STAGE,
 
     /** Priority [sai_uint32_t]
      * (MANDATORY_ON_CREATE|CREATE_ONLY)

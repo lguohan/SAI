@@ -188,6 +188,22 @@ typedef enum _sai_switch_attr_t
 
     /** READ-ONLY */
 
+    /**  Handle for the switch profile.
+     * sai_switch_profile_id_t of size _In_reads_z_(SAI_MAX_HARDWARE_ID_LEN) (MANDATORY_ON_CREATE|CREATE_ONLY) */
+    SAI_SWITCH_ATTR_PROFILE_ID,
+
+    /** Switch hardware ID to open 
+     * sai_string_t of size _In_reads_z_(SAI_MAX_HARDWARE_ID_LEN) (MANDATORY_ON_CREATE|CREATE_ONLY) */
+    SAI_SWITCH_ATTR_HARDWARE_INFO,
+
+    /** Vendor specific path name of the firmware to load
+     * sai_string_t of size _In_reads_z_(SAI_MAX_FIRMWARE_PATH_NAME_LEN) (MANDATORY_ON_CREATE|CREATE_ONLY) */
+    SAI_SWITCH_ATTR_FIRMWARE_PATH_NAME,
+
+    /** switch notification table 
+     * sai_switch_notification_t (MANDATORY_ON_CREATE|CREATE_ONLY)*/
+    SAI_SWITCH_ATTR_SWITCH_NOTIFICATIONS,
+
     /** The number of ports on the switch [sai_uint32_t] */
     SAI_SWITCH_ATTR_PORT_NUMBER = SAI_SWITCH_ATTR_START,
 
@@ -360,6 +376,9 @@ typedef enum _sai_switch_attr_t
     SAI_SWITCH_ATTR_ACL_CAPABILITY,
 
     /** READ-WRITE */
+
+    /** Type of reboot WARM, [bool] Default to flase(COLD)*/
+    SAI_SWITCH_ATTR_REBOOT_WARM,
 
     /** Switching mode [sai_switch_switching_mode_t]
        (default to SAI_SWITCHING_MODE_STORE_AND_FORWARD) */
@@ -605,41 +624,42 @@ typedef struct _sai_switch_notification_t
 
 /**
 * Routine Description:
-*   SDK initialization. After the call the capability attributes should be
+*   Create Switch 
+*   - SDK initialization. After the call the capability attributes should be
 *   ready for retrieval via sai_get_switch_attribute().
 *
 * Arguments:
-*   @param[in] profile_id - Handle for the switch profile.
-*   @param[in] switch_hardware_id - Switch hardware ID to open
-*   @param[in] firmware_path_name - Vendor specific path name of the firmware
-*                                   to load
-*   @param[in] switch_notifications - switch notification table
+*   @param[out] switch_id - router interface id
+*   @param[in] attr_count - number of attributes
+*   @param[in] attr_list - array of attributes
+*  
 * Return Values:
 *   @return SAI_STATUS_SUCCESS on success
 *           Failure status code on error
 */
-typedef sai_status_t (*sai_initialize_switch_fn)(
-    _In_ sai_switch_profile_id_t profile_id,
-    _In_reads_z_(SAI_MAX_HARDWARE_ID_LEN) char* switch_hardware_id,
-    _In_reads_opt_z_(SAI_MAX_FIRMWARE_PATH_NAME_LEN) char* firmware_path_name,
-    _In_ sai_switch_notification_t* switch_notifications
-    );
+typedef sai_status_t(*sai_create_switch_fn)(__Out_ sai_object_id_t* switch_id,
+                                            _In_ uint32_t attr_count,
+                                            _In_ const sai_attribute_t *attr_list
+                                           );
+
 
 /**
  * Routine Description:
- *   @brief Release all resources associated with currently opened switch
+ *   @brief Remove switch
+ *    - Release all resources associated with currently opened switch
  *
  * Arguments:
+ *   @param[in] switch_id - Switch id
  *   @param[in] warm_restart_hint - hint that indicates controlled warm restart.
  *                            Since warm restart can be caused by crash
  *                            (therefore there are no guarantees for this call),
  *                            this hint is really a performance optimization.
  *
  * Return Values:
- *   None
+ *   @return SAI_STATUS_SUCCESS on success
  */
-typedef void (*sai_shutdown_switch_fn)(
-    _In_ bool warm_restart_hint
+typedef void (*sai_remove_switch_fn)(
+         _In_ sai_object_id_t switch_id,
     );
 
 /**
@@ -649,17 +669,13 @@ typedef void (*sai_shutdown_switch_fn)(
  *   via sai_get_switch_attribute().
  *
  * Arguments:
- *   @param[in] profile_id - Handle for the switch profile.
- *   @param[in] switch_hardware_id - Switch hardware ID to open
- *   @param[in] switch_notifications - switch notification table
+ *   @param[in] switch_id - Handle for the switch profile.
  * Return Values:
  *   @return SAI_STATUS_SUCCESS on success
  *           Failure status code on error
  */
 typedef sai_status_t (*sai_connect_switch_fn)(
-    _In_ sai_switch_profile_id_t profile_id,
-    _In_reads_z_(SAI_MAX_HARDWARE_ID_LEN) char* switch_hardware_id,
-    _In_ sai_switch_notification_t* switch_notifications
+    _In_ sai_object_id_t switch_id,
     );
 
 /**
@@ -681,6 +697,7 @@ typedef void (*sai_disconnect_switch_fn)(
  *    @brief Set switch attribute value
  *
  * Arguments:
+ *    @param[in] switch_id - Switch id
  *    @param[in] attr - switch attribute
  *
  * Return Values:
@@ -688,6 +705,7 @@ typedef void (*sai_disconnect_switch_fn)(
  *            Failure status code on error
  */
 typedef sai_status_t (*sai_set_switch_attribute_fn)(
+     _In_ sai_object_id_t switch_id,
     _In_ const sai_attribute_t *attr
     );
 
@@ -697,6 +715,7 @@ typedef sai_status_t (*sai_set_switch_attribute_fn)(
  *    @brief Get switch attribute value
  *
  * Arguments:
+ *    @param[in] switch_id - Switch id
  *    @param[in] attr_count - number of switch attributes
  *    @param[inout] attr_list - array of switch attributes
  *
@@ -705,6 +724,7 @@ typedef sai_status_t (*sai_set_switch_attribute_fn)(
  *            Failure status code on error
  */
 typedef sai_status_t (*sai_get_switch_attribute_fn)(
+    _In_ sai_object_id_t switch_id,
     _In_ sai_uint32_t attr_count,
     _Inout_ sai_attribute_t *attr_list
     );
@@ -714,8 +734,8 @@ typedef sai_status_t (*sai_get_switch_attribute_fn)(
  */
 typedef struct _sai_switch_api_t
 {
-    sai_initialize_switch_fn        initialize_switch;
-    sai_shutdown_switch_fn          shutdown_switch;
+    sai_create_switch_fn            create_switch;
+    sai_remove_switch_fn            remove_switch;
     sai_connect_switch_fn           connect_switch;
     sai_disconnect_switch_fn        disconnect_switch;
     sai_set_switch_attribute_fn     set_switch_attribute;

@@ -480,6 +480,11 @@ typedef struct _sai_acl_capability_t
     sai_s32_list_t  action_list;
 }sai_acl_capability_t;
 
+typedef struct _sai_string_t {
+    uint32_t length;
+    char    *data;
+} sai_string_t;
+
 /**
  * @brief Data Type to use enum's as attribute value is sai_int32_t s32
  *
@@ -515,7 +520,8 @@ typedef union {
     sai_qos_map_list_t qosmap;
     sai_tunnel_map_list_t tunnelmap;
     sai_acl_capability_t aclcapability; 
-
+    sai_string_t string; 
+    sai_switch_notification_t *notification;
 } sai_attribute_value_t;
 
 typedef struct _sai_attribute_t {
