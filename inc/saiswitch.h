@@ -377,7 +377,12 @@ typedef enum _sai_switch_attr_t
 
     /** READ-WRITE */
 
-    /** Type of reboot WARM, [bool] Default to flase(COLD)*/
+    /** Type of reboot WARM/COLD,
+     *  hint that indicates controlled warm restart.
+     *  Since warm restart can be caused by crash
+     * (therefore there are no guarantees for this call),
+     *  this hint is really a performance optimization
+     * [bool] Default to flase(COLD)*/
     SAI_SWITCH_ATTR_REBOOT_WARM,
 
     /** Switching mode [sai_switch_switching_mode_t]
@@ -590,7 +595,7 @@ typedef enum _sai_switch_attr_t
  *   None
  */
 typedef void (*sai_switch_shutdown_request_fn)(
-    void
+       _In_ sai_object_id_t switch_id 
     );
 
 
@@ -605,7 +610,8 @@ typedef void (*sai_switch_shutdown_request_fn)(
  *    None
  */
 typedef void (*sai_switch_state_change_notification_fn)(
-    _In_ sai_switch_oper_status_t switch_oper_status
+       _In_ sai_object_id_t switch_id, 
+       _In_ sai_switch_oper_status_t switch_oper_status
     );
 
 
@@ -637,11 +643,10 @@ typedef struct _sai_switch_notification_t
 *   @return SAI_STATUS_SUCCESS on success
 *           Failure status code on error
 */
-typedef sai_status_t(*sai_create_switch_fn)(__Out_ sai_object_id_t* switch_id,
-                                            _In_ uint32_t attr_count,
-                                            _In_ const sai_attribute_t *attr_list
-                                           );
-
+typedef sai_status_t(*sai_create_switch_fn)(
+        _Out_ sai_object_id_t* switch_id,
+        _In_ uint32_t attr_count,
+        _In_ const sai_attribute_t *attr_list
 
 /**
  * Routine Description:
@@ -650,10 +655,6 @@ typedef sai_status_t(*sai_create_switch_fn)(__Out_ sai_object_id_t* switch_id,
  *
  * Arguments:
  *   @param[in] switch_id - Switch id
- *   @param[in] warm_restart_hint - hint that indicates controlled warm restart.
- *                            Since warm restart can be caused by crash
- *                            (therefore there are no guarantees for this call),
- *                            this hint is really a performance optimization.
  *
  * Return Values:
  *   @return SAI_STATUS_SUCCESS on success
