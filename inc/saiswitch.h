@@ -200,10 +200,6 @@ typedef enum _sai_switch_attr_t
      * sai_string_t of size _In_reads_z_(SAI_MAX_FIRMWARE_PATH_NAME_LEN) (MANDATORY_ON_CREATE|CREATE_ONLY) */
     SAI_SWITCH_ATTR_FIRMWARE_PATH_NAME,
 
-    /** switch notification table 
-     * sai_switch_notification_t (MANDATORY_ON_CREATE|CREATE_ONLY)*/
-    SAI_SWITCH_ATTR_SWITCH_NOTIFICATIONS,
-
     /** The number of ports on the switch [sai_uint32_t] */
     SAI_SWITCH_ATTR_PORT_NUMBER = SAI_SWITCH_ATTR_START,
 
@@ -638,7 +634,7 @@ typedef struct _sai_switch_notification_t
 *   @param[out] switch_id - router interface id
 *   @param[in] attr_count - number of attributes
 *   @param[in] attr_list - array of attributes
-*  
+*   @param[in] switch_notifications - switch notification table 
 * Return Values:
 *   @return SAI_STATUS_SUCCESS on success
 *           Failure status code on error
@@ -646,13 +642,15 @@ typedef struct _sai_switch_notification_t
 typedef sai_status_t(*sai_create_switch_fn)(
         _Out_ sai_object_id_t* switch_id,
         _In_ uint32_t attr_count,
-        _In_ const sai_attribute_t *attr_list
+        _In_ const sai_attribute_t *attr_list,
+        _In_ sai_switch_notification_t* switch_notifications
+        );
 
 /**
  * Routine Description:
  *   @brief Remove switch
  *    - Release all resources associated with currently opened switch
- *
+ )*
  * Arguments:
  *   @param[in] switch_id - Switch id
  *
@@ -670,13 +668,19 @@ typedef void (*sai_remove_switch_fn)(
  *   via sai_get_switch_attribute().
  *
  * Arguments:
- *   @param[in] switch_id - Handle for the switch profile.
+ *   @param[out] switch_id - router interface id
+ *   @param[in] attr_count - number of attributes
+ *   @param[in] attr_list - array of attributes
+ *   @param[in] switch_notifications - switch notification table 
  * Return Values:
  *   @return SAI_STATUS_SUCCESS on success
  *           Failure status code on error
  */
 typedef sai_status_t (*sai_connect_switch_fn)(
-    _In_ sai_object_id_t switch_id,
+        _Out_ sai_object_id_t* switch_id,
+        _In_ uint32_t attr_count,
+        _In_ const sai_attribute_t *attr_list,
+        _In_ sai_switch_notification_t* switch_notifications
     );
 
 /**
@@ -689,9 +693,8 @@ typedef sai_status_t (*sai_connect_switch_fn)(
  *   None
  */
 typedef void (*sai_disconnect_switch_fn)(
-    void
+    _In_ sai_object_id_t switch_id
     );
-
 
 /**
  * Routine Description:
@@ -706,7 +709,7 @@ typedef void (*sai_disconnect_switch_fn)(
  *            Failure status code on error
  */
 typedef sai_status_t (*sai_set_switch_attribute_fn)(
-     _In_ sai_object_id_t switch_id,
+    _In_ sai_object_id_t switch_id,
     _In_ const sai_attribute_t *attr
     );
 
