@@ -3,6 +3,7 @@ ACL - Access Control List
 API - Application Program Interface
 ARP - Address Resolution Protocol
 ASIC - Application Specific Integrated Circuit
+BFD - Bidirectional Forwarding Detection
 BGP - Border Gateway Protocol
 CAM - Content Addressable Memory
 CB - Callback
@@ -13,7 +14,10 @@ CIDR - Classless Inter Domain Routing
 CIR - Committed Information Rate
 CPU - Central Processing Unit
 CRC - Cyclic Redundancy Code
+DLD - Dead Lock Detection
+DLDR - Dead Lock Detection and Recovery
 DLL - Dynamic Link Library
+DLR - Dead Lock Recovery
 DSCP - Differentiated Services Code Point
 ECMP - Equal Cost Multi-Path
 ECN - Explicit Congestion Notification
@@ -23,7 +27,7 @@ FD - File Descriptor
 FDB - Forwarding Data Base
 FEC - Forward Error Correction
 GRE - Generic Routing Encapsulation
-HW - Hawdware
+HW - Hardware
 I2C - Inter Integrated Circuit
 ICMP - Internet Control Message Protocol
 IEEE - Institute of Electrical and Electronics Engineers
@@ -51,8 +55,8 @@ RPF - Reverse Path Forwarding
 RSPAN - Remote Span
 SAI - Switch Abstraction Interface
 SDK - Software Development Kit
-SG
-SNMP - Services and Protocols for Advanced Networks
+SG - (S,G) Source-specific multicast
+SNMP - Simple Network Management Protocol
 SPAN - Switched Port Analyzer
 SSH - Secure Shell
 STP - Spanning Tree Protocol
@@ -70,5 +74,7 @@ VRRP - Virtual Router Redundancy Protocol
 WCMP - Weighted Cost Multipath
 WRED - Weighted Random Early Detection
 WWW - World Wide Web
+XG - (*,G) Any-source Multicast
 XOFF - Transmitter Off
 XON - Transmitter On
+IGMP - Internet Group Management Protocol

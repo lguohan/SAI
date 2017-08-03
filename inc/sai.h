@@ -38,6 +38,7 @@
 #include "sailag.h"
 #include "saimcastfdb.h"
 #include "saimirror.h"
+#include "saimpls.h"
 #include "saineighbor.h"
 #include "sainexthopgroup.h"
 #include "sainexthop.h"
@@ -52,6 +53,7 @@
 #include "saisamplepacket.h"
 #include "saischedulergroup.h"
 #include "saischeduler.h"
+#include "saisegmentroute.h"
 #include "saistatus.h"
 #include "saistp.h"
 #include "saiswitch.h"
@@ -113,7 +115,9 @@ typedef enum _sai_api_t
     SAI_API_MCAST_FDB        = 32, /**< sai_mcast_fdb_api_t */
     SAI_API_BRIDGE           = 33, /**< sai_bridge_api_t */
     SAI_API_TAM              = 34, /**< sai_tam_api_t */
-    SAI_API_MAX              = 35, /**< total number of APIs */
+    SAI_API_SEGMENTROUTE     = 35, /**< sai_segmentroute_api_t */
+    SAI_API_MPLS             = 36, /**< sai_mpls_api_t */
+    SAI_API_MAX              = 37, /**< total number of APIs */
 } sai_api_t;
 
 /**
@@ -154,7 +158,7 @@ typedef int (*sai_profile_get_next_value_fn)(
  * @brief Method table that contains function pointers for services exposed by
  * adapter host for adapter.
  */
-typedef struct _service_method_table_t
+typedef struct _sai_service_method_table_t
 {
     /**
      * @brief Get variable value given its name
@@ -169,7 +173,7 @@ typedef struct _service_method_table_t
      */
     sai_profile_get_next_value_fn   profile_get_next_value;
 
-} service_method_table_t;
+} sai_service_method_table_t;
 
 /**
  * @brief Adapter module initialization call
@@ -183,7 +187,7 @@ typedef struct _service_method_table_t
  */
 sai_status_t sai_api_initialize(
         _In_ uint64_t flags,
-        _In_ const service_method_table_t *services);
+        _In_ const sai_service_method_table_t *services);
 
 /**
  * @brief Retrieve a pointer to the C-style method table for desired SAI
