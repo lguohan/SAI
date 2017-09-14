@@ -151,8 +151,8 @@ status = create_tunnel(virtual_router_id, 2000, &tunnel_id_1);
 status = create_tunnel(virtual_router_id, 2001, &tunnel_id_2);
 
 # create two tunnel nexthops on the virtual router
-status = create_nexthop_tunnel(virtual_router_id, "10.10.10.1", tunnel_id_1, &nexthop_id_1);
-status = create_nexthop_tunnel(virtual_router_id, "20.20.20.1", tunnel_id_2, &nexthop_id_2);
+status = create_nexthop_tunnel("10.10.10.1", tunnel_id_1, &nexthop_id_1);
+status = create_nexthop_tunnel("20.20.20.1", tunnel_id_2, &nexthop_id_2);
 
 # create two routes to the two nexthops 
 status = create_route("100.100.1.1/32", virtual_router_id, nexthop_id_1);
@@ -346,7 +346,6 @@ Create nexthop for the tunnel interface
 
 ```
 sai_status_t create_nexthop_tunnel(
-    sai_object_id_t router_id, 
     sai_ip4_t host_ip, 
     sai_object_id_t tunnel_id, 
     sai_object_id_t *next_hop_id)
@@ -359,7 +358,7 @@ sai_status_t create_nexthop_tunnel(
   next_hop_attrs[2].id = SAI_NEXT_HOP_ATTR_TUNNEL_ID;
   next_hop_attrs[2].value.oid = tunnel_id;
 
-  sai_status_t status = sai_next_hop_api->create_next_hop(next_hop_id, router_id, 3, next_hop_attrs);
+  sai_status_t status = sai_next_hop_api->create_next_hop(next_hop_id, 3, next_hop_attrs);
   return status;
 }
 ```
